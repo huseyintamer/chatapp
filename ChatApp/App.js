@@ -1,18 +1,10 @@
-/**
- * Sample React Native App
- * https://github.com/facebook/react-native
- *
- * @format
- * @flow strict-local
- */
-
-
-import React,{useEffect, useState} from 'react';
+import React,{useEffect, useState, useRef} from 'react';
 import {
   SafeAreaView,
   StyleSheet,
   ScrollView,
   View,
+  Button,
   Text,
   TextInput,
   StatusBar,
@@ -31,6 +23,7 @@ import io from 'socket.io-client/dist/socket.io';
 
 const App: () => React$Node = () => {
 
+const socket = useRef(null);
 const [message, setMessage ] =useState("");
 
   const connectionConfig = {
@@ -42,12 +35,15 @@ const [message, setMessage ] =useState("");
    };
 
   useEffect(()=> {
-   const socket = io("http://192.168.1.34:3000", connectionConfig);
-   socket.on('connect', function(){
-    console.log('Socket connected!');
-  });
-  })
+    socket.current = io("http://192.168.1.34:2020", connectionConfig);
+  }, [])
 
+
+const sendMessage = () => {
+  socket.current.emit("message",message);
+  console.log("mesaj gönderildi");
+  setMessage("");
+}
 
   return (
  
@@ -56,8 +52,9 @@ const [message, setMessage ] =useState("");
     <TextInput 
     value={message}
     onChangeText={text => setMessage(text)}
+    onSubmitEditing={sendMessage}
     placeholder="Text Input" />
- 
+ <Button onPress={sendMessage} title="send"/>
   </View>
   );
 };

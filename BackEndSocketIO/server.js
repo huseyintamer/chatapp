@@ -1,15 +1,12 @@
-var express = require('express');
-var app = express();
-var server = require('http').Server(app)
-var io = require('socket.io')(server);
+var io = require('socket.io')();
 
 
-app.get('/', function (req, res){
-  res.sendFile(__dirname + '/index.html');
+ io.on("connection", socket => {
+   console.log("a user baglandi");
+
+   socket.on("message", message => {
+     console.log(message);
+   });
  });
 
- io.on('connection', function (socket) {
-   console.log("baglandi");
-  socket.on('update', (data) => io.emit('update', {data}));
- });
- server.listen(3000);
+ io.listen(2020);
